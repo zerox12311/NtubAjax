@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script>
+        $(() => {
+            console.log("JQUERY READY");
+
+            let searchParams = new URLSearchParams(window.location.search);
+            let param = searchParams.get('id');
+
+
+            getVal = (id) => {
+                $.ajax({
+                    method: "GET",
+                    url: `http://localhost:59261/api/Tables/${param}`,
+                    dataType: 'json',
+                    success: (data) => {
+                        $("#inner").empty();
+                        console.group("GET DATA");
+                        console.log(data);
+                        console.groupEnd();
+                        $("#input_account").val(data.account);
+                        $("#input_password").val(data.password);
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        console.group("ERROR");
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                        console.groupEnd();
+                    }
+                });
+            }
+            getVal(param);
+
+            console.log(param);
+
+            $("#target").submit(function (event) {
+                var input_account = $("#input_account").val();
+                var input_password = $("#input_password").val()
+                console.log(event);
+                console.group("Data");
+                console.log($("#input_account").val());
+                console.log($("#input_password").val());
+                console.groupEnd();
+
+                var value = { "Id": param, "account": input_account, "password": input_password };
+                console.log(value);
+                postVal(value);
+                event.preventDefault();
+            });
+
+
+            postVal = (data) => {
+                $.ajax({
+                    method: "PUT",
+                    url: `http://localhost:59261/api/Tables/${param}`,
+                    dataType: 'json',
+                    data: data,
+                    success: (data) => {
+                        console.group("PUT DATA");
+                        console.log(data);
+                        console.groupEnd();
+                        window.location = "/";
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        console.group("ERROR");
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                        console.groupEnd();
+                    }
+                });
+            }
+
+
+        })
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Account Add Table</h2>
+        <form id="target" action="index.html">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Account</label>
+                <input type="text" class="form-control" id="input_account" aria-describedby="emailHelp" placeholder="Enter Account">
+                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" id="input_password" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</body>
+
+</html>

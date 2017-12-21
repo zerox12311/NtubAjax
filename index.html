@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(() => {
+            console.log("JQUERY READY");
+            $.ajax({
+                method: "GET",
+                url: "http://localhost:59261/api/Tables",
+                dataType: 'json',
+                success: (data) => {
+                    $("#inner").empty();
+                    console.group("GET DATA");
+                    console.log(data);
+                    console.groupEnd();
+                    append_talbe(data)
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    console.group("ERROR");
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    console.groupEnd();
+                }
+            });
+        })
+
+        function del(id) {
+            $.ajax({
+                method: "DELETE",
+                url: `http://localhost:59261/api/Tables/${id}`,
+                dataType: 'json',
+                success: (data) => {
+                    $("#inner").empty();
+                    console.group("GET DATA");
+                    console.log(data);
+                    console.groupEnd();
+                    location.reload();
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    console.group("ERROR");
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    console.groupEnd();
+                }
+            });
+        }
+
+
+        append_talbe = (data) => {
+            data.forEach((val) => {
+                $("#inner")
+                    .append(`
+                        <tr>
+                            <td>${val.Id}</td>
+                            <td>${val.account}</td>
+                            <td>${val.password}</td>
+                            <td>
+                                <a class="btn btn-success" href="./edit.html?id=${val.Id}">Edit</a>
+                                <button class="btn btn-danger" onclick="del(${val.Id})">Delete</button>
+                            </td>
+                        </tr>
+                    `);
+            })
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Account Table</h2>
+        <a href="add.html" class="btn btn-success">Create new account</a>
+        <br>
+
+        <!-- <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p> -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID#</th>
+                    <th>Account</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody id="inner">
+            </tbody>
+        </table>
+    </div>
+</body>
+
+
+</html>
